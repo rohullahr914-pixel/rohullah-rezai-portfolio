@@ -101,8 +101,9 @@ function renderScroll(){
   team.classList.remove('show');
   chapters.forEach((section,chapterIndex)=>{
     const rect=section.getBoundingClientRect();
-    if(rect.top>0||rect.bottom<innerHeight)return;
-    const local=clamp(-rect.top/(section.offsetHeight-innerHeight));
+    if(rect.top>2||rect.bottom<innerHeight-2)return;
+    const raw=clamp(-rect.top/(section.offsetHeight-innerHeight));
+    const local=section.classList.contains('about')? .52+raw*.48 : raw;
     const parts=[...section.querySelectorAll('.scene-sticky > .scene-piece')];
     const states=parts.map((part,i)=>movePart(part,local,i,false,chapterIndex===chapters.length-1));
     const status=section.querySelector('.assembly-status');
@@ -129,3 +130,6 @@ function updateClock(){
   $('#clock').textContent=new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date());
 }
 updateClock();setInterval(updateClock,1000);renderScroll();
+addEventListener('load',()=>{renderScroll();setTimeout(renderScroll,150)});
+addEventListener('hashchange',()=>requestAnimationFrame(renderScroll));
+addEventListener('pageshow',renderScroll);
